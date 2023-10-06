@@ -1,7 +1,142 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Wisely</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        button {
+            margin: 10px;
+            padding: 20px 40px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+
 <body>
-<h1>Hello World</h1>
-<p>I'm hosted with GitHub Pages.</p>
+    <button onclick="openWindow()">Begin Game</button>
+    <p> The game is simple, when you click on the button "Begin Game" a new window with 3 doors will appear. Each of these doors will give you a random number within a range (some doors are better than others) you have a limited number of clicks to get the highest score possible. Be careful though, if you leave a door alone for too long you will no longer be able to select that door. Switching between doors will incur a penalty.</p>
+    <script>
+        function openWindow() {
+            // Specify window properties
+            const width = 400;
+            const height = 500;
+            const left = (window.innerWidth - width) / 2;
+            const top = (window.innerHeight - height) / 2;
+            const min1 = 3;
+            const max1 = 9;
+            const min2 = 3;
+            const max2 = 5;
+            const min3 = 3;
+            const max3 = 7;
+            const clickpenalty = 3;
+            let clicks = 20;
+
+            // Counter variable
+            let count = 0;
+            let b1 = 5;
+            let b2 = 5;
+            let b3 = 5;
+
+            // Open a new window
+            const newWindow = window.open('', '_blank', `width=${width},height=${height},left=${left},top=${top}`);
+
+
+            // Add the same CSS rules to the new window's document
+            const styleElement = newWindow.document.createElement('style');
+            styleElement.textContent = `
+                body {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    height: 100vh;
+                    margin: 0;
+                }
+
+                button {
+                    margin: 10px;
+                    padding: 20px 40px;
+                    font-size: 18px;
+                }
+            `;
+            newWindow.document.head.appendChild(styleElement);
+
+
+            // Function to handle button clicks
+            newWindow.buttonClick = function (buttonNumber) {
+                if (clicks > 0) {
+                    clicks--;
+                    if (buttonNumber === 1 && b1 > 0 && clicks > 0) {
+                        // Increase count by a random integer between 1 and 3
+                        count += Math.floor(Math.random() * (max1 - min1 + 1)) + min1;
+                        b2--;
+                        b3--;
+                        if (b1 != 4) {
+                            clicks -= clickpenalty;
+                        }
+                        b1 = 4;
+
+                    } else if (buttonNumber === 2 && b2 > 0 && clicks > 0) {
+
+                        count += Math.floor(Math.random() * (max2 - min2 + 1)) + min2;
+                        b1--;
+                        b3--;
+                        if (b2 != 4) {
+                            clicks -= clickpenalty;
+
+                        }
+                        b2 = 4;
+                    } else if (buttonNumber === 3 && b3 > 0 && clicks > 0) {
+                        count += Math.floor(Math.random() * (max3 - min3 + 1)) + min3;
+                        b1--;
+                        b2--;
+                        if (b3 != 4) {
+                            clicks -= clickpenalty;
+                        }
+                        b3 = 4;
+                    }
+                    // Update the content in the new window
+                    let buttonsHTML = '';
+                    if (b1 > 0) {
+                        buttonsHTML += `<button onclick="buttonClick(1)"> Door 1 (${b1})</button>`;
+                    } else {
+                        buttonsHTML += `<button style="background-color: red;" disabled> Door 1 (0)</button>`;
+                    }
+                    if (b2 > 0) {
+                        buttonsHTML += `<button onclick="buttonClick(2)"> Door 2 (${b2})</button>`;
+                    } else {
+                        buttonsHTML += `<button style="background-color: red;" disabled> Door 2 (0)</button>`;
+                    }
+                    if (b3 > 0) {
+                        buttonsHTML += `<button onclick="buttonClick(3)"> Door 3 (${b3})</button>`;
+                    } else {
+                        buttonsHTML += `<button style="background-color: red;" disabled> Door 3 (0)</button>`;
+                    }
+                    newWindow.document.body.innerHTML = `<h1>Choose Wisely</h1>`;
+                    newWindow.document.body.innerHTML += `<p>Count: ${count}</p>`;
+                    newWindow.document.body.innerHTML += `<p>clicks left: ${clicks}</p>`;
+                    newWindow.document.body.innerHTML += buttonsHTML;
+                } else if (clicks <= 0) {
+                    newWindow.document.body.innerHTML = `<h1>You are out of clicks! Your final count was : ${count}</h1>`;
+                }
+            };
+
+            // Call the buttonClick() function initially to display the initial content
+            newWindow.buttonClick();
+        }
+    </script>
 </body>
+
 </html>
