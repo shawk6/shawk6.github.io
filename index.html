@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <link  href="page2.html" >
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Choose Wisely</title>
@@ -25,9 +26,18 @@
 
 
 <body>
+   
     <button onclick="openWindow()">Begin Game</button>
     <p> The game is simple, when you click on the button "Begin Game" a new window with 3 doors will appear. Each of these doors will give you a random number within a range (some doors are better than others) you have a limited number of clicks to get the highest score possible. Be careful though, if you leave a door alone for too long you will no longer be able to select that door. Switching between doors will incur a penalty.</p>
+    <form action="https://sheetdb.io/api/v1/tp69iwau08t2g" method="post" id="myForm" >
+        <div class="container">
+        <label for="score">Name:</label>
+        <input type="text" id="score" name="data[score]"><br><br>
+        
+    </div>
+    </form>
     <script>
+        
         function openWindow() {
             // Specify window properties
             const width = 400;
@@ -42,13 +52,15 @@
             const max3 = 7;
             const clickpenalty = 3;
             let clicks = 20;
+            
 
             // Counter variable
             let count = 0;
-            let b1 = 5;
-            let b2 = 5;
-            let b3 = 5;
-
+            let b1 = 4;
+            let b2 = 4;
+            let b3 = 4;
+            
+            const buttonValues = [b1, b2, b3]; // Store b1, b2, and b3 values in an array
             // Open a new window
             const newWindow = window.open('', '_blank', `width=${width},height=${height},left=${left},top=${top}`);
 
@@ -65,7 +77,7 @@
                     margin: 0;
                 }
 
-                button {
+                button  {
                     margin: 10px;
                     padding: 20px 40px;
                     font-size: 18px;
@@ -76,6 +88,8 @@
 
             // Function to handle button clicks
             newWindow.buttonClick = function (buttonNumber) {
+                const buttons = newWindow.document.querySelectorAll('button');
+                
                 if (clicks > 0) {
                     clicks--;
                     if (buttonNumber === 1 && b1 > 0 && clicks > 0) {
@@ -107,35 +121,60 @@
                         }
                         b3 = 4;
                     }
+
+
                     // Update the content in the new window
+                    let shrinkAmount = 10;
                     let buttonsHTML = '';
-                    if (b1 > 0) {
-                        buttonsHTML += `<button onclick="buttonClick(1)"> Door 1 (${b1})</button>`;
-                    } else {
-                        buttonsHTML += `<button style="background-color: red;" disabled> Door 1 (0)</button>`;
-                    }
-                    if (b2 > 0) {
-                        buttonsHTML += `<button onclick="buttonClick(2)"> Door 2 (${b2})</button>`;
-                    } else {
-                        buttonsHTML += `<button style="background-color: red;" disabled> Door 2 (0)</button>`;
-                    }
-                    if (b3 > 0) {
-                        buttonsHTML += `<button onclick="buttonClick(3)"> Door 3 (${b3})</button>`;
-                    } else {
-                        buttonsHTML += `<button style="background-color: red;" disabled> Door 3 (0)</button>`;
-                    }
+    if (b1 > 0) {
+        buttonsHTML += `<button onclick="buttonClick(1)" style="width: ${200 - shrinkAmount * (5 - b1)}px; height: ${ 100 - shrinkAmount * (5 - b1)}px;"> Door 1 (${b1})</button>`;
+    } else {
+        buttonsHTML += `<button style="background-color: red; width: 100px; height: 40px;" disabled> Door 1 (0)</button>`;
+    }
+    if (b2 > 0) {
+        buttonsHTML += `<button onclick="buttonClick(2)" style="width: ${200 - shrinkAmount * (5 - b2)}px; height: ${100 - shrinkAmount * (5 - b2)}px;"> Door 2 (${b2})</button>`;
+    } else {
+        buttonsHTML += `<button style="background-color: red; width: 100px; height: 40px;" disabled> Door 2 (0)</button>`;
+    }
+    if (b3 > 0) {
+        buttonsHTML += `<button onclick="buttonClick(3)" style="width: ${200 - shrinkAmount * (5 - b3)}px; height: ${100 - shrinkAmount * (5 - b3)}px;"> Door 3 (${b3})</button>`;
+    } else {
+        buttonsHTML += `<button style="background-color: red; width: 100px; height: 40px;" disabled> Door 3 (0)</button>`;
+    }
                     newWindow.document.body.innerHTML = `<h1>Choose Wisely</h1>`;
                     newWindow.document.body.innerHTML += `<p>Count: ${count}</p>`;
                     newWindow.document.body.innerHTML += `<p>clicks left: ${clicks}</p>`;
                     newWindow.document.body.innerHTML += buttonsHTML;
                 } else if (clicks <= 0) {
+                    document.getElementById("score").value = count;
+                    form.submit ();
                     newWindow.document.body.innerHTML = `<h1>You are out of clicks! Your final count was : ${count}</h1>`;
-                }
-            };
+                    }
+                    buttons.forEach((button, index) => {
+            const scaleFactor = 1 + (buttonValues[index] * 0.02); // Adjust the scaling factor according to your preference
+            button.style.transform = `scale(${scaleFactor})`;
+        });
+                };
+               
 
             // Call the buttonClick() function initially to display the initial content
             newWindow.buttonClick();
         }
+        
+            var form = document.getElementById('myForm');
+        form.addEventListener("submit", e => {
+          e.preventDefault();
+          fetch(form.action, {
+              method : "POST",
+              body: new FormData(document.getElementById("myForm")),
+          }).then(
+              response => response.json()
+          ).then((html) => {
+            // you can put any JS code here
+            window.open('page2.html', '_blank');
+
+          });
+        });
     </script>
 </body>
 
